@@ -1,30 +1,51 @@
 import React, { useState } from 'react';
-import { TextInput, Button, StyleSheet, View } from 'react-native';
+import {
+  TextInput,
+  Text,
+  Button,
+  StyleSheet,
+  View,
+  Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-
-export function Signin(){
+export function Signin( { navigation }){
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
 
-  const handleSubmit = () => {
-    console.log(email, password);
-
+  const handleSubmit = async () => {
+    try {
+      const response = await axios({
+        method: 'POST',
+        url:`http://localhost:8000/sponsors/signin`,
+        data: { email, password }
+      });
+      const { token } = response.data;
+      await AsyncStorage.setItem('token', token );
+      navigation.navigate('Recipients')
+    }
+    catch(err){
+      Alert.alert(err.message)
+      await AsyncStorage.removeItem('token')
+      navigation.navigate('Home')
+    }
   }
   const handleForgotPassword = () => {
-    console.log("HERE");
+    console.log("Forget password under construction");
   }
   return(
     <View style={ styles.container }>
+      <Text>Your Email: </Text>
       <TextInput
-        placeholder="Your email"
+        placeholder="john@doe.com"
         onChangeText={ email => setEmail( email ) }
         autoCapitalize="none"
         value={ email }
         textContentType= "emailAddress"
         style={ styles.input }
       />
+      <Text>Your Password: </Text>
       <TextInput
-        placeHolder="Password"
         onChangeText={ password => setPassword( password ) }
         textContentType="password"
         value={ password }
@@ -46,7 +67,7 @@ export function Signin(){
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 1,
     backgroundColor: '#d3e0ea',
     alignItems:'center',
     justifyContent:'center'
@@ -58,6 +79,8 @@ const styles = StyleSheet.create({
   input: {
     width: 200,
     height: 40,
+    // margin: 5,
+    // padding: 20,
     borderWidth: 1,
     borderRadius: 5,
     textAlign:'center',

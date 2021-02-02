@@ -1,23 +1,54 @@
 import React, { useState } from 'react';
-import { TextInput, Button, StyleSheet, View } from 'react-native';
+import {
+  TextInput,
+  Text,
+  Button,
+  StyleSheet,
+  View,
+  Alert } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
-export function Signup(){
+export function Signup( { navigation }){
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   const [ confPassword, setConfPassword ] = useState('');
 
-  const handleSubmit = () => {
-    console.log(email, password);
+  const handleSubmit = async () => {
+    if(password === confPassword ){
+      try {
+        const response = await axios({
+          method: 'POST',
+          url:`http://localhost:8000/sponsors/signup`,
+          data: { email, password }
+        });
+        const { token } = response.data;
+        await AsyncStorage.setItem('token', token );
+        navigation.navigate('Recipients')
+      }
+      catch(err){
+        Alert.alert(err.message)
+        await AsyncStorage.removeItem('token')
+        navigation.navigate('Home')
+      }
+    }
+    else {
+      Alert.alert("Sorry!, Password and Confirm Password fields must be equal. Try again")
+    }
   }
   return(
     <View style={ styles.container }>
+      <Text>Your Email: </Text>
       <TextInput
-        placeholder="Your email"
+        placeholder="john@doe.com"
         onChangeText={ email => setEmail( email ) }
+        autoCapitalize="none"
         value={ email }
         style={styles.input}
       />
+      <Text>Your password: </Text>
       <TextInput
         placeHolder="Your password"
         onChangeText={ password => setPassword( password ) }
@@ -25,8 +56,9 @@ export function Signup(){
         style={styles.input}
         secureTextEntry
       />
+      <Text>Confirm your password: </Text>
       <TextInput
-        placeHolder="Your password"
+        placeHolder="Confirm your password"
         onChangeText={ confPassword => setConfPassword( confPassword ) }
         value={ confPassword }
         style={styles.input}
@@ -42,7 +74,7 @@ export function Signup(){
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 1,
     backgroundColor: '#d3e0ea',
     alignItems:'center',
     justifyContent:'center'
