@@ -33,32 +33,39 @@ export function Recipients( { navigation }){
     })
   },[navigation]);
 
+  const verifyToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if(!token){
+        navigation.navigate('Home')
+      }
+    }
+    catch(err){
+      setError(true)
+    }
+  }
 
-  useEffect(()=> {
-    AsyncStorage.getItem('token')
-                                .then(token => {
-                                  if(!token){
-                                    navigation.navigate('Home')
-                                  }
-                                })
-                                .catch(err => {
-                                  setError(true);
-                                })
+  const recipientsRequest = async () => {
+    try {
+      const response = await axios({
+        method: 'GET',
+        url: 'http://localhost:8000/recipients'
+      })
+      const { data } = response.data;
+      setRecipients(data);
+      setLoading(false);
+    }
+    catch(err) {
+      setError(true);
+    }
+  }
+
+  useEffect(() => {
+    verifyToken();
   }, [])
 
-  useEffect(()=> {
-    axios({
-      method: 'GET',
-      url:`http://localhost:8000/recipients/`
-    })
-      .then(( response )  => {
-        const { data } = response.data;
-        setRecipients(data)
-      })
-      .then(() => setLoading(false))
-      .catch(err => {
-        console.log(err);
-      })
+  useEffect(() => {
+    recipientsRequest();
   }, [])
 
   if(error) return (<Text>Something went wrong</Text>)
