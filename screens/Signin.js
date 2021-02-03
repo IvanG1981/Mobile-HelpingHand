@@ -25,7 +25,7 @@ export function Signin( { navigation }){
       navigation.navigate('Recipients')
     }
     catch(err){
-      Alert.alert(err.message)
+      Alert.alert('Please sign in with a registered email address')
       await AsyncStorage.removeItem('token')
       navigation.navigate('Home')
     }

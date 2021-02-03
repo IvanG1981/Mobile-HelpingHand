@@ -32,34 +32,42 @@ export function Recipient( { navigation, route }){
     })
   },[navigation]);
 
+  const verifyToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      if(!token){
+        navigation.navigate('Home')
+      }
+    }
+    catch(err){
+      setError(true)
+    }
+  }
+
+  const recipientRequest = async () => {
+    try {
+      const response = await axios({
+        method: 'GET',
+        baseURL: 'http://localhost:8000/recipients',
+        url:`/${route.params.id}`
+      })
+      const { data } = response.data;
+      setRecipient(data);
+      setLoading(false);
+    }
+    catch(err) {
+      setError(true);
+    }
+  }
 
   useEffect(()=> {
-    AsyncStorage.getItem('token')
-                                .then(token => {
-                                  if(!token){
-                                    navigation.navigate('Home')
-                                  }
-                                })
-                                .catch(err => {
-                                  setError(true);
-                                })
+    verifyToken();
   }, [])
 
   useEffect(()=> {
-    axios({
-      method: 'GET',
-      baseURL:`http://localhost:8000/recipients/`,
-      url:`/${route.params.id}`
-    })
-      .then(( response )  => {
-        const { data } = response.data;
-        setRecipient(data)
-      })
-      .then(() => setLoading(false))
-      .catch(err => {
-        console.log(err);
-      })
-  }, [])
+    recipientRequest();
+  },[])
+
 
   if(error) return (<Text>Something went wrong</Text>)
   if(loading) return (<ActivityIndicator size='large' color='#0000ff' />)
