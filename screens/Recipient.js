@@ -7,7 +7,7 @@ import {
   Button,
   StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import { helpinghandServer } from '../utils/apihelpinghand';
 
 
 
@@ -46,10 +46,9 @@ export function Recipient( { navigation, route }){
 
   const recipientRequest = async () => {
     try {
-      const response = await axios({
+      const response = await helpinghandServer({
         method: 'GET',
-        baseURL: 'http://localhost:8000/recipients',
-        url:`/${route.params.id}`
+        url:`/recipients/${route.params.id}`
       })
       const { data } = response.data;
       setRecipient(data);
