@@ -7,7 +7,7 @@ import {
   View,
   Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import { helpinghandServer } from '../utils/apihelpinghand';
 
 export function Signin( { navigation }){
   const [ email, setEmail ] = useState('');
@@ -15,11 +15,11 @@ export function Signin( { navigation }){
 
   const handleSubmit = async () => {
     try {
-      const response = await axios({
-        method: 'POST',
-        url:`http://localhost:8000/sponsors/signin`,
+      const response = await helpinghandServer({
+        method:'POST',
+        url:`/sponsors/signin`,
         data: { email, password }
-      });
+      })
       const { token } = response.data;
       await AsyncStorage.setItem('token', token );
       navigation.navigate('Recipients')
