@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
-import {
-  TextInput,
-  Text,
-  Button,
-  StyleSheet,
-  View,
-  Alert } from 'react-native';
+import React from 'react';
+import { Text, View, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
+import TextInput from '../components/TextInput';
+import CustomButton from '../components/CustomButton';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const LoginSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email').required('Required'),
+  password: Yup.string()
+    .min(2,'Too Short!')
+    .max(10, 'Too Long!')
+    .required('Required')
+})
 
 export function Signin( { navigation }){
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
+  const {
+    handleChange,
+    handleSubmit,
+    handleBlur,
+    values,
+    errors,
+    touched
+  } = useFormik({
+    validationSchema: LoginSchema,
+    initialValues: { email: '', password: '' },
+    onSubmit: values => handleSignin( values.email, values.password )
+  });
 
-  const handleSubmit = async () => {
+  const handleSignin = async ( email, password ) => {
     try {
       const response = await helpinghandServer({
         method:'POST',
@@ -30,38 +47,48 @@ export function Signin( { navigation }){
       navigation.navigate('Home')
     }
   }
+
   const handleForgotPassword = () => {
     console.log("Forget password under construction");
   }
   return(
     <View style={ styles.container }>
-      <Text>Your Email: </Text>
-      <TextInput
-        placeholder="john@doe.com"
-        onChangeText={ email => setEmail( email ) }
-        autoCapitalize="none"
-        value={ email }
-        textContentType= "emailAddress"
-        style={ styles.input }
-      />
-      <Text>Your Password: </Text>
-      <TextInput
-        onChangeText={ password => setPassword( password ) }
-        textContentType="password"
-        value={ password }
-        style={ styles.input }
-        secureTextEntry
-      />
-
-      <Button
-        title="Sign In"
-        onPress={ handleSubmit }
-      />
-      <Button
-        title="Forgot your password?"
-        onPress={ handleForgotPassword }
-      />
+      <Text style={ styles.label }>Login</Text>
+      <View style={ styles.input }>
+        <TextInput
+          icon='mail'
+          placeholder='Enter your email'
+          autoCapitalize='none'
+          autoCompleteType='email'
+          keyboardType='email-address'
+          keyboardAppearance='dark'
+          returnKeyType='next'
+          returnKeyLabel='next'
+          onChangeText={ handleChange('email') }
+          onBlur={ handleBlur('email') }
+          error={ errors.email }
+          touched={ touched.email }
+        />
+      </View>
+      <View style={ styles.input }>
+        <TextInput
+          icon='key'
+          placeholder='Enter your password'
+          secureTextEntry
+          autoCompleteType='password'
+          autoCapitalize='none'
+          keyboardAppearance='dark'
+          returnKeyType='go'
+          returnKeyType='go'
+          onChangeText={ handleChange('password') }
+          onBlur={ handleBlur('password') }
+          error={ errors.password }
+          touched={ touched.password }
+        />
+      </View>
+      <CustomButton label='Login' onPress={ handleSubmit }/>
     </View>
+
   )
 }
 
@@ -72,18 +99,14 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'center'
   },
-  mainImage: {
-    width: 100,
-    height: 100
+  label: {
+    color: '#5eaaa8',
+    fontSize: 20,
+    marginBottom: 16
   },
   input: {
-    width: 200,
-    height: 40,
-    // margin: 5,
-    // padding: 20,
-    borderWidth: 1,
-    borderRadius: 5,
-    textAlign:'center',
-    borderColor:'gray'
+    paddingHorizontal: 32,
+    marginBottom: 16,
+    width: '100%',
   }
 });
