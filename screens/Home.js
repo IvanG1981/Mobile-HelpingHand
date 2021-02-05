@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 export function Home( { navigation }) {
   return(
     <View style={ styles.container }>
-      <Text style={ { paddingBottom: 50 }}>Welcome to Helping Hand!!</Text>
+      <Text style={ { paddingBottom: 50, fontSize: 20 }}>Welcome to Helping Hand!!</Text>
       <Image
         source={ require('../images/community.png') }
         style={ styles.mainImage }
@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
     height: 100
   },
   signinLink: {
-    color: '#276678'
+    color: '#276678',
+    fontSize: 20,
   },
   button: {
     alignItems: "center",
