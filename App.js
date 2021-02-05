@@ -8,7 +8,8 @@ import { Signin } from './screens/Signin';
 import { Signup } from './screens/Signup';
 import { Recipients } from './screens/Recipients';
 import { Recipient } from './screens/Recipient';
-import { Button } from 'react-native';
+import { Contribute } from './screens/Contribute';
+
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ export default function App( ) {
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="Recipients"component={Recipients}/>
         <Stack.Screen name="Recipient"component={Recipient}/>
+        <Stack.Screen name="Contribute"component={Contribute}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
