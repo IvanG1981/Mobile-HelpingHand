@@ -5,9 +5,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   Button,
-  StatusBar } from 'react-native';
+  StatusBar,
+  TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
+import CustomButton from '../components/CustomButton';
+
 
 
 
@@ -78,9 +81,13 @@ export function Recipient( { navigation, route }){
           <Text>{recipient.name}</Text>
           <Text>{recipient.bio}</Text>
           <Text>{recipient.need}</Text>
+
         </View>
       )}
       <StatusBar style="auto"/>
+      <CustomButton
+        label='Contribute'
+        onPress={ () => navigation.navigate('Contribute', { id: recipient._id }) }/>
     </View>
   )
 }
