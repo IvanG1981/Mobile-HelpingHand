@@ -12,7 +12,7 @@ import { helpinghandServer } from '../utils/apihelpinghand';
 
 
 
-export function Recipients( { navigation }){
+export function Recipients( { navigation, route }){
   const [ loading, setLoading ] = useState(true)
   const [ error, setError ] = useState(false)
   const [ recipients, setRecipients ] = useState([])
@@ -73,6 +73,12 @@ export function Recipients( { navigation }){
 
   return (
     <View style={ styles.container }>
+
+      <Button
+        title="Create new profile"
+        onPress={ () => navigation.navigate('Create') }
+        disabled={!route.params.isAdmin}
+      />
       {recipients && recipients.length >0 && (
         <FlatList
           data={recipients}

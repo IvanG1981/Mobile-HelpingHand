@@ -4,12 +4,13 @@ import {
   View,
   ActivityIndicator,
   StyleSheet,
-  Button,
+  // Button,
   StatusBar,
   TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
 import CustomButton from '../components/CustomButton';
+import { Card, Icon, Button } from 'react-native-elements';
 
 
 
@@ -23,6 +24,7 @@ export function Recipient( { navigation, route }){
     navigation.setOptions({
       headerRight: () => (
         <Button
+          type='clear'
           title="Log Out"
           onPress={ async ()=>
             {
@@ -77,20 +79,29 @@ export function Recipient( { navigation, route }){
   return (
     <View style={ styles.container }>
       {recipient && (
-        <View style={ styles.recipient }>
-          <Text>{recipient.name}</Text>
-          <Text>{recipient.bio}</Text>
-          <Text>{recipient.need}</Text>
-
-        </View>
+        <Card containerStyle={ styles.recipient }>
+          <Card.Title>{ recipient.name } </Card.Title>
+          <Card.Divider/>
+            <Text style={{marginBottom: 10}}>
+              { recipient.bio }
+            </Text>
+            <Card.Divider/>
+            <Button
+              type='clear'
+              title='Contribute'
+              onPress={
+                () => navigation.navigate('Contribute', { id: recipient._id })
+              }
+            />
+        </Card>
       )}
       <StatusBar style="auto"/>
-      <CustomButton
-        label='Contribute'
-        onPress={ () => navigation.navigate('Contribute', { id: recipient._id }) }/>
+
     </View>
   )
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -102,9 +113,10 @@ const styles = StyleSheet.create({
   recipient:{
     alignItems:'center',
     justifyContent:'center',
-    borderRadius: 5,
-    borderWidth:1,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: "gray",
+    backgroundColor: '#dddddd',
     margin: 5,
     padding: 25
   }
