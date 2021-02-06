@@ -24,7 +24,10 @@ const styles = StyleSheet.create({
     width: 245,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#a3d2ca'
+    backgroundColor: '#a3d2ca',
+    marginTop: 15,
+    marginRight: 0,
+    marginLeft: 0
   },
   buttonLabel: {
     fontSize: 18,
