@@ -48,8 +48,7 @@ export function Signup( { navigation }){
       navigation.navigate('Recipients', {isAdmin});
     }
     catch(err){
-      console.log(err);
-      Alert.alert(err.message)
+      Alert.alert('HelpingHand only allows 6 administrator accounts')
       await AsyncStorage.removeItem('token')
       navigation.navigate('Home')
     }
