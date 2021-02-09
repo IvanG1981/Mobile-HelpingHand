@@ -1,7 +1,6 @@
 import React from 'react';
 import { TextInput as RNTextInput, View, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-// import { Entypo as Icon } from '@expo/vector-icons';
+import { Entypo as Icon } from '@expo/vector-icons';
 
 export default function TextInput( { icon, error, touched, ...otherProps }) {
   const validationColor = !touched ? '#223e4b' : error ? '#FF5A5F' : '#223e4b'
