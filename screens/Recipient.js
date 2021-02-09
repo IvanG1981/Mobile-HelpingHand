@@ -83,7 +83,7 @@ export function Recipient( { navigation, route }){
   }
   else {
     const sackPercent = ((recipient.accumulated * 100) / recipient.need ).toFixed(1);
-    const progressPercent = (sackPercent/100).toFixed(1);
+    const progressPercent = parseInt((sackPercent/100).toFixed(1));
     let flagColor;
     if( sackPercent < 25 ){
       flagColor = '#dc4444'
@@ -133,7 +133,7 @@ export function Recipient( { navigation, route }){
               <View style={ styles.progressContainer }>
                 <Text style= {{ padding: 5, paddingRight: 15 }} >0</Text>
                 <ProgressBar
-                  progress={ progressPercent ? progressPercent : 0.8 }
+                  progress={ progressPercent }
                   style={ styles.progress }
                 />
                 <Text style= {{ padding: 5, paddingLeft: 15 }} >100%</Text>

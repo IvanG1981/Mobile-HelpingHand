@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
+import React ,{useState} from 'react';
+import { Text, View, StyleSheet, Alert, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
 import TextInput from '../components/TextInput';
@@ -21,6 +21,7 @@ const SignupSchema = Yup.object().shape({
 
 
 export function Signup( { navigation }){
+  const [isAdmin, setIsAdmin ] = useState(false)
   const {
     handleChange,
     handleSubmit,
@@ -35,18 +36,19 @@ export function Signup( { navigation }){
   });
 
   const handleSignup = async ( email, password ) => {
+    const userType = isAdmin ? 'admins' : 'sponsors'
     try {
       const response = await helpinghandServer({
         method:'POST',
-        url:`/sponsors/signup`,
+        url:`/${userType}/signup`,
         data: { email, password }
       })
       const { token } = response.data;
       await AsyncStorage.setItem('token', token );
-      navigation.navigate('Recipients')
+      navigation.navigate('Recipients', {isAdmin});
     }
     catch(err){
-      Alert.alert(err.message)
+      Alert.alert('HelpingHand only allows 6 administrator accounts')
       await AsyncStorage.removeItem('token')
       navigation.navigate('Home')
     }
@@ -103,6 +105,15 @@ export function Signup( { navigation }){
           secureTextEntry
         />
       </View>
+      <Text style={ styles.label }>Are you Signing up as Administrator?</Text>
+      <View style= { styles.switchContainer } >
+        <Text style={{ padding: 5, paddingRight: 10 }}>No</Text>
+        <Switch
+          onValueChange={() => setIsAdmin(prevIsAdmin => !prevIsAdmin) }
+          value={isAdmin}
+        />
+        <Text style={{ padding: 5, paddingLeft: 10 }}>Yes</Text>
+      </View>
       <CustomButton label='Signup' onPress={ handleSubmit }/>
     </View>
   )
@@ -114,6 +125,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'center'
+  },
+  switchContainer:  {
+    flexDirection: 'row',
+    textAlign: 'center',
   },
   label: {
     color: '#5eaaa8',
