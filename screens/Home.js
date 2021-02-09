@@ -39,7 +39,7 @@ export function Home( { navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d3e0ea',
+    backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'space-around'
   },
