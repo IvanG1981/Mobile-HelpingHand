@@ -6,6 +6,7 @@ import { Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
 import TextInput from '../components/TextInput';
+import LargeTextInput from '../components/LargeTextInput';
 import CustomButton from '../components/CustomButton';
 
 // import { useFormik } from 'formik';
@@ -64,17 +65,16 @@ export function Create( { navigation }){
 
   }
   async function takeImage(){
-    const data = await ImagePicker.launchCameraAsync({
+    const response = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [3, 3],
       quality: 1
     })
 
-    setProfileImage(data)
+    setProfileImage(response)
   }
   const handleCreateProfile = async () => {
-    console.log('HERE HANDLECREATEPROFILE');
     try {
       const token = await AsyncStorage.getItem('token')
       const source= {
@@ -119,7 +119,7 @@ export function Create( { navigation }){
         <Text style={ styles.label }> Profile Information </Text>
         <View style={ styles.input }>
           <TextInput
-            icon='alphabetical-variant'
+            icon='add-user'
             placeholder="Enter profile name"
             textContentType='name'
             autoCapitalize='none'
@@ -134,8 +134,8 @@ export function Create( { navigation }){
           />
         </View>
         <View style={ styles.input2 }>
-          <TextInput
-            icon='bio'
+          <LargeTextInput
+            icon='text'
             placeholder="Enter profile biography"
             textContentType='none'
             autoCapitalize='none'
@@ -152,7 +152,7 @@ export function Create( { navigation }){
         </View>
         <View style={ styles.input }>
           <TextInput
-            icon='creditsack-percent'
+            icon='credit'
             placeholder="Enter contributions goal"
             autoCapitalize='none'
             autoCompleteType='off'
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical:50,
     marginBottom: 16,
-    width: '100%'
+    width: '100%',
   }
 });
 

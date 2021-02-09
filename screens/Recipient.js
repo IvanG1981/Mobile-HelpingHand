@@ -83,7 +83,7 @@ export function Recipient( { navigation, route }){
   }
   else {
     const sackPercent = ((recipient.accumulated * 100) / recipient.need ).toFixed(1);
-    const progressPercent = parseInt((sackPercent/100).toFixed(1));
+    const progressPercent = (sackPercent/100).toFixed(1);
     let flagColor;
     if( sackPercent < 25 ){
       flagColor = '#dc4444'
@@ -148,15 +148,27 @@ export function Recipient( { navigation, route }){
                 />
               </View>
               <Card.Divider/>
-              <Button
-                buttonStyle={ { borderRadius: 20 } }
-                type='outline'
-                raised
-                title='Contribute'
-                onPress={
-                  () => navigation.navigate('Contribute', { id: recipient._id })
-                }
-              />
+              { sackPercent < 95 ?
+                <Button
+                  buttonStyle={ { borderRadius: 20 } }
+                  type='outline'
+                  raised
+                  title='Contribute'
+                  onPress={
+                    () => navigation.navigate('Contribute', { id: recipient._id })
+                  }
+                />
+                :
+                <Card.FeaturedTitle
+                  style={{
+                    color: 'black',
+                    textAlign: 'center'
+                  }}
+                >
+                  We have reached our goal to help { recipient.name }
+                </Card.FeaturedTitle>
+              }
+
           </Card>
         )}
         <StatusBar style="auto"/>

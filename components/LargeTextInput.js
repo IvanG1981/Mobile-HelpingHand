@@ -2,13 +2,13 @@ import React from 'react';
 import { TextInput as RNTextInput, View, StyleSheet } from 'react-native';
 import { Entypo as Icon } from '@expo/vector-icons';
 
-export default function TextInput( { icon, error, touched, ...otherProps }) {
+export default function LargeTextInput( { icon, error, touched, ...otherProps }) {
   const validationColor = !touched ? '#223e4b' : error ? '#FF5A5F' : '#223e4b'
   const styles = StyleSheet.create({
     inputBox: {
       flexDirection: 'row',
       alignItems: 'center',
-      height: 48,
+      height: 100,
       borderRadius: 8,
       borderColor: validationColor,
       borderWidth: StyleSheet.hairlineWidth,
