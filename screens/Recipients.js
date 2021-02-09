@@ -5,14 +5,15 @@ import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
-  Button,
   StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
 
+import { Card, Icon, Button, Avatar } from 'react-native-elements';
 
 
-export function Recipients( { navigation }){
+
+export function Recipients( { navigation, route }){
   const [ loading, setLoading ] = useState(true)
   const [ error, setError ] = useState(false)
   const [ recipients, setRecipients ] = useState([])
@@ -22,6 +23,7 @@ export function Recipients( { navigation }){
       headerRight: () => (
         <Button
           title="Log Out"
+          type='clear'
           onPress={ async ()=>
             {
               await AsyncStorage.clear()
@@ -69,47 +71,106 @@ export function Recipients( { navigation }){
   }, [])
 
   if(error) return (<Text>Something went wrong</Text>)
-  if(loading) return (<ActivityIndicator size='large' color='#0000ff' />)
+  if(loading) {
+    return (
+      <View style={ styles.container }>
+        <ActivityIndicator size='large' color='#eb5e0b' />
+      </View>
+    )
+  }
+  else {
+    return (
+      <View style={ styles.container }>
 
-  return (
-    <View style={ styles.container }>
-      {recipients && recipients.length >0 && (
-        <FlatList
-          data={recipients}
-          renderItem={({ item }) => (
-            <View style={styles.recipient}>
-              <Text> {item.name} </Text>
-              <Text> {item.bio} </Text>
-              <Text> {item.need} </Text>
-              <Button
-                title="Contribute"
-                onPress={ () => navigation.navigate('Recipient',{ id: item._id })}
-              />
-            </View>
-          )}
-          keyExtractor={(item) => `${item._id}`}
+        <Button
+          title="Create new profile"
+          type='clear'
+          onPress={ () => navigation.navigate('Create') }
+          disabled={!route.params.isAdmin}
         />
-      )}
-      <StatusBar style="auto"/>
-    </View>
-  )
+        {recipients && recipients.length >0 && (
+          <FlatList
+            data={recipients}
+            renderItem={({ item }) => (
+              <>
+                <Card containerStyle={ styles.recipient }>
+                  <Card.FeaturedTitle
+                    style={{ color: 'black',
+                             textAlign: 'center'
+                            }
+                          }
+                  >
+                    { item.name }
+                  </Card.FeaturedTitle>
+
+                  <Card.Divider />
+
+                  {
+                    item.profileImage ?
+                      <Card.Image
+                        source={{ uri: item.profileImage }}
+                        PlaceholderContent={ <ActivityIndicator size='large' color='#eb5e0b' />}
+                        containerStyle={ styles.imageContainer }
+                      />
+                      :
+                      <Avatar
+                        rounded
+                        size='xlarge'
+                        icon={{ name:'user', type: 'font-awesome' }}
+                        containerStyle={ styles.avatarContainer }
+                      />
+                  }
+
+                  <Card.Divider />
+
+                  <Text
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  > {item.bio} </Text>
+                  <Button
+                    title='View More'
+                    type='clear'
+                    onPress={ () => navigation.navigate('Recipient',{ id: item._id })}
+                  />
+                </Card>
+              </>
+            )}
+            keyExtractor={(item) => `${item._id}`}
+          />
+        )}
+        <StatusBar style="auto"/>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d3e0ea',
+    backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'center'
   },
   recipient:{
     alignItems:'center',
     justifyContent:'center',
-    borderRadius: 5,
-    borderWidth:1,
+    flexDirection: 'column',
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: "gray",
+    backgroundColor: '#f8f1f1',
     margin: 5,
-    padding: 25
+    padding: 25,
+  },
+  avatarContainer: {
+    backgroundColor: '#aaaaaa',
+    marginLeft: 100,
+    marginBottom: 16,
+
+  },
+  imageContainer: {
+    marginBottom: 16,
+    borderRadius: 20,
   }
 });
 

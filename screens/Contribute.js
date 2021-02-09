@@ -19,7 +19,7 @@ const contributeSchema = Yup.object().shape({
   exp_year: Yup.string().min(4).max(4).required('Required'),
   exp_month: Yup.string().min(2).max(2).required('Required'),
   cvc: Yup.string().min(3).max(3).required('Required'),
-  amount: Yup.number().required().positive().integer().min(1000).max(200000),
+  amount: Yup.number().required().positive().integer().min(10000).max(200000),
 
 
 })
@@ -316,7 +316,7 @@ export function Contribute( { navigation, route }){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d3e0ea',
+    backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'center'
   },

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
+import React, {useState} from 'react';
+import { Text, View, StyleSheet, Alert, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
 import TextInput from '../components/TextInput';
@@ -17,6 +17,7 @@ const LoginSchema = Yup.object().shape({
 })
 
 export function Signin( { navigation }){
+  const [ isAdmin, setIsAdmin ] = useState(false)
   const {
     handleChange,
     handleSubmit,
@@ -31,25 +32,45 @@ export function Signin( { navigation }){
   });
 
   const handleSignin = async ( email, password ) => {
-    try {
-      const response = await helpinghandServer({
-        method:'POST',
-        url:`/sponsors/signin`,
-        data: { email, password }
-      })
-      const { token } = response.data;
-      await AsyncStorage.setItem('token', token );
-      navigation.navigate('Recipients')
+    if(!isAdmin) {
+      try {
+        const response = await helpinghandServer({
+          method:'POST',
+          url:`/sponsors/signin`,
+          data: { email, password }
+        })
+        const { token } = response.data;
+        await AsyncStorage.setItem('token', token );
+        navigation.navigate('Recipients', { isAdmin } )
+      }
+      catch(err){
+        Alert.alert('Please sign in with a registered email address')
+        await AsyncStorage.removeItem('token')
+        navigation.navigate('Home')
+      }
     }
-    catch(err){
-      Alert.alert('Please sign in with a registered email address')
-      await AsyncStorage.removeItem('token')
-      navigation.navigate('Home')
+    else {
+      try {
+        const response = await helpinghandServer({
+          method:'POST',
+          url:`/admins/signin`,
+          data: { email, password }
+        })
+        const { token } = response.data;
+        await AsyncStorage.setItem('token', token );
+        navigation.navigate('Recipients', { isAdmin } )
+      }
+      catch(err){
+        Alert.alert('Please sign in with a registered email address')
+        await AsyncStorage.removeItem('token')
+        navigation.navigate('Home')
+      }
     }
   }
 
   const handleForgotPassword = () => {
     console.log("Forget password under construction");
+    console.log('Admin state', isAdmin );
   }
   return(
     <View style={ styles.container }>
@@ -86,7 +107,16 @@ export function Signin( { navigation }){
           touched={ touched.password }
         />
       </View>
-      <CustomButton label='Login' onPress={ handleSubmit }/>
+      <Text style={ styles.label }>Are you the Administrator?</Text>
+      <View style= { styles.switchContainer } >
+        <Text style={{ padding: 5, paddingRight: 10 }}>No</Text>
+        <Switch
+          onValueChange={() => setIsAdmin(prevIsAdmin => !prevIsAdmin) }
+          value={isAdmin}
+        />
+        <Text style={{ padding: 5, paddingLeft: 10 }}>Yes</Text>
+      </View>
+            <CustomButton label='Login' onPress={ handleSubmit }/>
     </View>
 
   )
@@ -95,9 +125,13 @@ export function Signin( { navigation }){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d3e0ea',
+    backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'center'
+  },
+  switchContainer:  {
+    flexDirection: 'row',
+    textAlign: 'center',
   },
   label: {
     color: '#5eaaa8',

@@ -4,12 +4,12 @@ import {
   View,
   ActivityIndicator,
   StyleSheet,
-  Button,
   StatusBar,
-  TouchableOpacity } from 'react-native';
+  Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
-import CustomButton from '../components/CustomButton';
+import { Card, Icon, Button, Avatar } from 'react-native-elements';
+import  ProgressBar from 'react-native-progress/Bar';
 
 
 
@@ -19,10 +19,12 @@ export function Recipient( { navigation, route }){
   const [ error, setError ] = useState(false)
   const [ recipient, setRecipient ] = useState(null)
 
+
   useLayoutEffect(()=> {
     navigation.setOptions({
       headerRight: () => (
         <Button
+          type='clear'
           title="Log Out"
           onPress={ async ()=>
             {
@@ -53,7 +55,7 @@ export function Recipient( { navigation, route }){
         method: 'GET',
         url:`/recipients/${route.params.id}`
       })
-      const { data } = response.data;
+      const { data } = response.data
       setRecipient(data);
       setLoading(false);
     }
@@ -72,41 +74,141 @@ export function Recipient( { navigation, route }){
 
 
   if(error) return (<Text>Something went wrong</Text>)
-  if(loading) return (<ActivityIndicator size='large' color='#0000ff' />)
+  if(loading) {
+    return (
+      <View style={ styles.container }>
+        <ActivityIndicator size='large' color='#eb5e0b' />
+      </View>
+    )
+  }
+  else {
+    const sackPercent = ((recipient.accumulated * 100) / recipient.need ).toFixed(1);
+    const progressPercent = (sackPercent/100).toFixed(1);
+    let flagColor;
+    if( sackPercent < 25 ){
+      flagColor = '#dc4444'
+    }
+    else if( sackPercent >= 25 && sackPercent < 50 ) {
+      flagColor = '#f5a855'
+    }
+    else if( sackPercent >= 50 && sackPercent < 95 ) {
+      flagColor = '#f4e557'
+    }
+    else {
+      flagColor = '#a1dd70'
+    }
+    return (
+      <View style={ styles.container }>
+        {recipient && (
+          <Card containerStyle={ styles.recipient }>
+            <Card.FeaturedTitle
+              style={{
+                color: 'black',
+                textAlign: 'center'
+              }}
+            >
+              { recipient.name }
+            </Card.FeaturedTitle>
+            <Card.Divider/>
+            { recipient.profileImage ?
+              <Card.Image
+                source={{ uri: recipient.profileImage }}
+                PlaceholderContent={<ActivityIndicator size='large' color='#eb5e0b' />}
+                containerStyle={ styles.imageContainer }
+              />
+              :
+              <Avatar
+                rounded
+                size='xlarge'
+                icon={{ name:'user', type: 'font-awesome' }}
+                containerStyle={ styles.avatarContainer }
+              />
+            }
 
-  return (
-    <View style={ styles.container }>
-      {recipient && (
-        <View style={ styles.recipient }>
-          <Text>{recipient.name}</Text>
-          <Text>{recipient.bio}</Text>
-          <Text>{recipient.need}</Text>
-
-        </View>
-      )}
-      <StatusBar style="auto"/>
-      <CustomButton
-        label='Contribute'
-        onPress={ () => navigation.navigate('Contribute', { id: recipient._id }) }/>
-    </View>
-  )
+            <Card.Divider/>
+              <Text style={{ marginBottom: 10 }}>
+                { recipient.bio }
+              </Text>
+              <Card.Divider/>
+              <View style={ styles.progressContainer }>
+                <Text style= {{ padding: 5, paddingRight: 15 }} >0</Text>
+                <ProgressBar
+                  progress={ progressPercent ? progressPercent : 0.8 }
+                  style={ styles.progress }
+                />
+                <Text style= {{ padding: 5, paddingLeft: 15 }} >100%</Text>
+              </View>
+              <View style={ styles.accumulatedContainer }>
+                <Text style={{ fontSize: 30 }}> { sackPercent } </Text>
+                <Icon
+                  name='percent-outline'
+                  type='material-community'
+                  color= { flagColor }
+                  reverse
+                />
+              </View>
+              <Card.Divider/>
+              <Button
+                buttonStyle={ { borderRadius: 20 } }
+                type='outline'
+                raised
+                title='Contribute'
+                onPress={
+                  () => navigation.navigate('Contribute', { id: recipient._id })
+                }
+              />
+          </Card>
+        )}
+        <StatusBar style="auto"/>
+      </View>
+    )
+  }
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d3e0ea',
+    backgroundColor: '#f4f9f9',
     alignItems:'center',
     justifyContent:'center'
+  },
+  avatarContainer: {
+    backgroundColor: '#aaaaaa',
+    marginLeft: 90,
+    marginBottom: 16,
+    // borderRadius: 20
+  },
+  imageContainer: {
+    marginBottom: 16,
+    borderRadius: 20
+
   },
   recipient:{
     alignItems:'center',
     justifyContent:'center',
-    borderRadius: 5,
-    borderWidth:1,
+    flexDirection: 'column',
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: "gray",
+    backgroundColor: '#f8f1f1',
     margin: 5,
-    padding: 25
+    padding: 25,
+  },
+  progressContainer: {
+    alignItems:'center',
+    justifyContent:'center',
+    flexDirection: 'row'
+  },
+  accumulatedContainer: {
+    alignItems:'center',
+    justifyContent:'center',
+    flexDirection: 'row',
+    marginBottom: 16
+  },
+  progress: {
+    marginBottom: 16,
   }
 });
 

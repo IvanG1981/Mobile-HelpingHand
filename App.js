@@ -9,6 +9,7 @@ import { Signup } from './screens/Signup';
 import { Recipients } from './screens/Recipients';
 import { Recipient } from './screens/Recipient';
 import { Contribute } from './screens/Contribute';
+import { Create } from './screens/Create';
 
 
 const Stack = createStackNavigator();
@@ -20,9 +21,10 @@ export default function App( ) {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Signin" component={Signin} />
         <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Recipients"component={Recipients}/>
-        <Stack.Screen name="Recipient"component={Recipient}/>
-        <Stack.Screen name="Contribute"component={Contribute}/>
+        <Stack.Screen name="Create" component={Create}/>
+        <Stack.Screen name="Recipients" component={Recipients}/>
+        <Stack.Screen name="Recipient" component={Recipient}/>
+        <Stack.Screen name="Contribute" component={Contribute}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
