@@ -95,10 +95,10 @@ export function Recipients( { navigation, route }){
               <>
                 <Card containerStyle={ styles.recipient }>
                   <Card.FeaturedTitle
-                    style={{ color: 'black',
-                             textAlign: 'center'
-                            }
-                          }
+                    style={{
+                      color: 'black',
+                      textAlign: 'center'
+                    }}
                   >
                     { item.name }
                   </Card.FeaturedTitle>
