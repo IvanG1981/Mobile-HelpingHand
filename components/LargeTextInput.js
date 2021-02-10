@@ -7,7 +7,7 @@ export default function LargeTextInput( { icon, error, touched, ...otherProps })
   const styles = StyleSheet.create({
     inputBox: {
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       height: 100,
       borderRadius: 8,
       borderColor: validationColor,
