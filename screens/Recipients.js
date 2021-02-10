@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -59,6 +60,7 @@ export function Recipients( { navigation, route }){
     }
     catch(err) {
       setError(true);
+      setLoading(false);
     }
   }
 
@@ -66,9 +68,11 @@ export function Recipients( { navigation, route }){
     verifyToken();
   }, [])
 
-  useEffect(() => {
-    recipientsRequest();
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      recipientsRequest()
+    }, [])
+  )
 
   if(error) return (<Text>Something went wrong</Text>)
   if(loading) {
@@ -149,7 +153,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f4f9f9',
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
+    width:'100%'
   },
   recipient:{
     alignItems:'center',

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -15,6 +16,7 @@ import  ProgressBar from 'react-native-progress/Bar';
 
 
 export function Recipient( { navigation, route }){
+
   const [ loading, setLoading ] = useState(true)
   const [ error, setError ] = useState(false)
   const [ recipient, setRecipient ] = useState(null)
@@ -68,9 +70,11 @@ export function Recipient( { navigation, route }){
     verifyToken();
   }, [])
 
-  useEffect(()=> {
-    recipientRequest();
-  },[])
+  useFocusEffect(
+    React.useCallback(() => {
+      recipientRequest()
+    }, [])
+  )
 
 
   if(error) return (<Text>Something went wrong</Text>)
@@ -91,7 +95,7 @@ export function Recipient( { navigation, route }){
     else if( sackPercent >= 25 && sackPercent < 50 ) {
       flagColor = '#f5a855'
     }
-    else if( sackPercent >= 50 && sackPercent < 95 ) {
+    else if( sackPercent >= 50 && sackPercent < 90 ) {
       flagColor = '#f4e557'
     }
     else {
@@ -130,13 +134,15 @@ export function Recipient( { navigation, route }){
                 { recipient.bio }
               </Text>
               <Card.Divider/>
+                <Text style={ styles.goal }> Our goal is ${ recipient.need }</Text>
+              <Card.Divider/>
               <View style={ styles.progressContainer }>
                 <Text style= {{ padding: 5, paddingRight: 15 }} >0</Text>
                 <ProgressBar
-                  progress={ progressPercent }
+                  progress={ +progressPercent }
                   style={ styles.progress }
                 />
-                <Text style= {{ padding: 5, paddingLeft: 15 }} >100% - ${ recipient.need } </Text>
+                <Text style= {{ padding: 5, paddingLeft: 15 }} >100%  </Text>
               </View>
               <View style={ styles.accumulatedContainer }>
                 <Text style={{ fontSize: 30 }}> { sackPercent } </Text>
@@ -159,12 +165,7 @@ export function Recipient( { navigation, route }){
                   }
                 />
                 :
-                <Card.FeaturedTitle
-                  style={{
-                    color: 'black',
-                    textAlign: 'center'
-                  }}
-                >
+                <Card.FeaturedTitle style= { styles.goal } >
                   We have reached our goal to help { recipient.name }
                 </Card.FeaturedTitle>
               }
@@ -190,7 +191,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#aaaaaa',
     marginLeft: 90,
     marginBottom: 16,
-    // borderRadius: 20
   },
   imageContainer: {
     marginBottom: 16,
@@ -221,6 +221,19 @@ const styles = StyleSheet.create({
   },
   progress: {
     marginBottom: 16,
+    marginTop: 16,
+  },
+  goal: {
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: {width:-1, height:1},
+    textShadowRadius: 10,
+    marginBottom: 16,
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: '#eb5e0b',
+    letterSpacing: 2.5,
+
   }
 });
 
