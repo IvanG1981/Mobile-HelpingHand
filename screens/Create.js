@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import * as Permission from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
-import { Text, View, StyleSheet, StatusBar, Button, Alert } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, Button, Alert, ActivityIndicator } from 'react-native';
 import { Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
@@ -9,14 +9,7 @@ import TextInput from '../components/TextInput';
 import LargeTextInput from '../components/LargeTextInput';
 import CustomButton from '../components/CustomButton';
 
-// import { useFormik } from 'formik';
-// import * as Yup from 'yup';
 
-// const createProfileSchema = Yup.object().shape({
-//   name: Yup.string().email('Invalid email').required('Required'),
-//   bio: Yup.string().min(10).max(240).required(),
-//   need: Yup.number().required().positive().integer().min(10000).max(200000)
-// })
 
 export function Create( { navigation }){
   const [ mediaLibraryPermission, setMediaLibraryPermission ] = useState('denied');
@@ -25,23 +18,7 @@ export function Create( { navigation }){
   const [ name, setName ] = useState('');
   const [ bio, setBio ] = useState('');
   const [ need, setNeed ] = useState('');
-  // const {
-  //   handleChange,
-  //   handleSubmit,
-  //   handleBlur,
-  //   values,
-  //   errors,
-  //   touched
-  // } = useFormik({
-  //   validationSchema: createProfileSchema,
-  //   initialValues: { name: '', bio:'', need: 0 },
-  //   onSubmit: values => handleCreateProfile(
-  //     values.name,
-  //     values.bio,
-  //     values.need,
-  //   )
-  // });
-
+  const [ isUpdating, setIsUpdating ] = useState(false);
 
   useEffect(() => {
     Permission
@@ -75,13 +52,13 @@ export function Create( { navigation }){
     setProfileImage(response)
   }
   const handleCreateProfile = async () => {
+    setIsUpdating(true)
     try {
       const token = await AsyncStorage.getItem('token')
       const source= {
         ...profileImage,
         name: 'Profile.jpg'
       }
-      console.log('source', source);
       const data = new FormData();
       data.append('name', name);
       data.append('bio', bio);
@@ -114,6 +91,14 @@ export function Create( { navigation }){
       </View>
     )
   }
+  if(isUpdating){
+    return (
+      <View style={ styles.container }>
+        <ActivityIndicator size='large' color='#eb5e0b' style={{ marginBottom: 16 }} />
+        <Text style={ styles.label }>...we are creating this new profile </Text>
+      </View>
+    )
+  }
   return (
     <View style={ styles.container }>
         <Text style={ styles.label }> Profile Information </Text>
@@ -128,9 +113,6 @@ export function Create( { navigation }){
             returnKeyType='next'
             onChangeText={ text => setName(text) }
             value={name}
-            // onBlur={ handleBlur('name') }
-            // errors={ errors.name }
-            // touched={ touched.name }
           />
         </View>
         <View style={ styles.input2 }>
@@ -145,9 +127,9 @@ export function Create( { navigation }){
             returnKeyLabel='next'
             onChangeText={ text => setBio(text) }
             value={bio}
-            // onBlur={ handleBlur('bio') }
-            // error={ errors.bio }
-            // touched={ touched.bio }
+            multiline= {true}
+            textAlignVertical='top'
+            maxLength={150}
           />
         </View>
         <View style={ styles.input }>
@@ -162,9 +144,6 @@ export function Create( { navigation }){
             returnKeyLabel='next'
             onChangeText={ num => setNeed(num) }
             value={need}
-            // onBlur={ handleBlur('need') }
-            // error={ errors.need }
-            // touched={ touched.need }
           />
         </View>
         <Button
@@ -190,7 +169,6 @@ export function Create( { navigation }){
   )
 
 }
-
 
 const styles = StyleSheet.create({
   container: {

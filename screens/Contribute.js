@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Text, View, StyleSheet, Alert, Button } from 'react-native';
+import { Text, View, StyleSheet, Alert, Button, ActivityIndicator } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { helpinghandServer } from '../utils/apihelpinghand';
@@ -27,6 +27,7 @@ const contributeSchema = Yup.object().shape({
 export function Contribute( { navigation, route }){
   const [doc_type, setDoc_type] = useState('')
   const [dues, setDues] = useState('')
+  const [ isUpdating, setIsUpdating ] = useState(false)
   const {
     handleChange,
     handleSubmit,
@@ -46,8 +47,6 @@ export function Contribute( { navigation, route }){
       exp_month: '',
       cvc:'',
       amount: 0
-
-
      },
     onSubmit: values => handleContribution(
       values.name,
@@ -78,6 +77,7 @@ export function Contribute( { navigation, route }){
     dues,
   ) => {
     try {
+      setIsUpdating(true)
       const token = await AsyncStorage.getItem('token')
       const response = await helpinghandServer({
         method: 'POST',
@@ -99,14 +99,14 @@ export function Contribute( { navigation, route }){
           Authorization: `Bearer ${token}`
         }
       })
-      navigation.navigate('Recipients')
+      Alert.alert('Thank you for your helping hand!')
+      navigation.navigate('Recipient')
     }
     catch(err) {
       Alert.alert('Something went wrong')
       navigation.navigate('Home')
     }
   }
-
 
   useLayoutEffect(()=> {
     navigation.setOptions({
@@ -138,6 +138,14 @@ export function Contribute( { navigation, route }){
     catch(err){
       setError(true)
     }
+  }
+  if(isUpdating){
+    return (
+      <View style={ styles.container }>
+        <ActivityIndicator size='large' color='#eb5e0b' style={{ marginBottom: 16 }} />
+        <Text style={ styles.label }>...we are updating your contribution </Text>
+      </View>
+    )
   }
 
   return(
@@ -192,6 +200,7 @@ export function Contribute( { navigation, route }){
       <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: "row" }}>
         <View style={ styles.pickerContainer } >
           <RNPickerSelect
+            placeholderTextColor='rgba(34,62,75,0.7)'
             onValueChange={(value) => setDoc_type(value)}
             placeholder={{ label:'Document Type', value: null  }}
             items={[
@@ -206,8 +215,6 @@ export function Contribute( { navigation, route }){
             icon='v-card'
             placeholder='Enter your id number'
             autoCapitalize='none'
-            keyboardType='number-pad'
-            keyboardAppearance='dark'
             returnKeyType='next'
             returnKeyLabel='next'
             onChangeText={ handleChange('doc_number') }
@@ -224,8 +231,6 @@ export function Contribute( { navigation, route }){
           placeholder='Enter your Credit Card Number'
           autoCapitalize='none'
           autoCompleteType='cc-number'
-          keyboardType='number-pad'
-          keyboardAppearance='dark'
           returnKeyType='next'
           returnKeyLabel='next'
           onChangeText={ handleChange('number') }
@@ -240,8 +245,6 @@ export function Contribute( { navigation, route }){
             placeholder='YYYY'
             autoCapitalize='none'
             autoCompleteType='cc-exp-year'
-            keyboardType='number-pad'
-            keyboardAppearance='dark'
             returnKeyType='next'
             returnKeyLabel='next'
             onChangeText={ handleChange('exp_year') }
@@ -255,8 +258,6 @@ export function Contribute( { navigation, route }){
             placeholder='MM'
             autoCapitalize='none'
             autoCompleteType='cc-exp-month'
-            keyboardType='number-pad'
-            keyboardAppearance='dark'
             returnKeyType='next'
             returnKeyLabel='next'
             onChangeText={ handleChange('exp_month') }
@@ -270,8 +271,6 @@ export function Contribute( { navigation, route }){
             placeholder='CVC'
             autoCapitalize='none'
             autoCompleteType='cc-csc'
-            keyboardType='number-pad'
-            keyboardAppearance='dark'
             returnKeyType='next'
             returnKeyLabel='next'
             onChangeText={ handleChange('cvc') }
@@ -287,7 +286,16 @@ export function Contribute( { navigation, route }){
             items={[
               { label: "1", value: "1"},
               { label: "2", value: "2"},
-              { label: "3", value: "3"}
+              { label: "3", value: "3"},
+              { label: "4", value: "4"},
+              { label: "5", value: "5"},
+              { label: "6", value: "6"},
+              { label: "7", value: "7"},
+              { label: "8", value: "8"},
+              { label: "9", value: "9"},
+              { label: "10", value: "10"},
+              { label: "11", value: "11"},
+              { label: "12", value: "12"},
             ]}
           />
         </View>
@@ -297,8 +305,6 @@ export function Contribute( { navigation, route }){
         <TextInput
           icon='credit'
           placeholder='Amount between $10000 and $200000'
-          keyboardType='number-pad'
-          keyboardAppearance='dark'
           returnKeyType='go'
           returnKeyLabel='go'
           onChangeText={ handleChange('amount') }

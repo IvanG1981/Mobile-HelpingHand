@@ -5,8 +5,6 @@ import { helpinghandServer } from '../utils/apihelpinghand';
 import TextInput from '../components/TextInput';
 import CustomButton from '../components/CustomButton';
 
-
-
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -70,11 +68,6 @@ export function Signin( { navigation }){
     }
   }
 
-
-  const handleForgotPassword = () => {
-    console.log("Forget password under construction");
-    console.log('Admin state', isAdmin );
-  }
   return(
     <View style={ styles.container }>
       <Text style={ styles.label }>Login</Text>
