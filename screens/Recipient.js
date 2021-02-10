@@ -136,7 +136,7 @@ export function Recipient( { navigation, route }){
                   progress={ progressPercent }
                   style={ styles.progress }
                 />
-                <Text style= {{ padding: 5, paddingLeft: 15 }} >100%</Text>
+                <Text style= {{ padding: 5, paddingLeft: 15 }} >100% - ${ recipient.need } </Text>
               </View>
               <View style={ styles.accumulatedContainer }>
                 <Text style={{ fontSize: 30 }}> { sackPercent } </Text>
